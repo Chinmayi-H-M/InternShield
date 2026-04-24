@@ -25,9 +25,9 @@ const Footer = () => {
         <div>
           <h4 style={{ marginBottom: '1rem' }}>Resources</h4>
           <div className="flex flex-col gap-2">
-            <a href="#" className="text-muted text-sm">FAQ</a>
-            <a href="#" className="text-muted text-sm">Blog</a>
-            <a href="#" className="text-muted text-sm">Contact Us</a>
+            <Link to="/faq" className="text-muted text-sm" style={{ transition: 'color 0.2s' }}>FAQ</Link>
+            <Link to="/blog" className="text-muted text-sm" style={{ transition: 'color 0.2s' }}>Blog</Link>
+            <Link to="/contact" className="text-muted text-sm" style={{ transition: 'color 0.2s' }}>Contact Us</Link>
           </div>
         </div>
       </div>

@@ -8,16 +8,30 @@ const Checker = () => {
   const [isChecking, setIsChecking] = useState(false);
   const navigate = useNavigate();
 
-  const handleCheck = (e) => {
+  const handleCheck = async (e) => {
     e.preventDefault();
     if (!inputVal) return;
     setIsChecking(true);
     
-    // Simulate AI checking timeout
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: inputVal })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to analyze');
+      }
+
+      const data = await response.json();
       setIsChecking(false);
-      navigate('/dashboard'); // Proceed to results
-    }, 2500);
+      navigate('/dashboard', { state: { result: data, inputText: inputVal } });
+    } catch (error) {
+      console.error(error);
+      setIsChecking(false);
+      alert('Failed to analyze internship. Ensure backend is running.');
+    }
   };
 
   return (

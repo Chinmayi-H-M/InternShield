@@ -5,6 +5,9 @@ import Home from './pages/Home';
 import Checker from './pages/Checker';
 import Dashboard from './pages/Dashboard';
 import Report from './pages/Report';
+import FAQ from './pages/FAQ';
+import Blog from './pages/Blog';
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
             <Route path="/check" element={<Checker />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/report" element={<Report />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
         </main>
         <Footer />
