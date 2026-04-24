@@ -14,7 +14,7 @@ const Checker = () => {
     setIsChecking(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/analyze', {
+      const response = await fetch('https://internshield-a4wm.onrender.com/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: inputVal })
