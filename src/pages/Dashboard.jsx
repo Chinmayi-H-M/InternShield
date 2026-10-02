@@ -30,6 +30,7 @@ const Dashboard = () => {
       case 'Safe': return 'var(--color-success)';
       case 'Suspicious': return 'var(--color-warning)';
       case 'Scam': return 'var(--color-danger)';
+      case 'Uncertain': return 'var(--color-text-muted)';
       default: return 'var(--color-primary)';
     }
   };
@@ -39,6 +40,7 @@ const Dashboard = () => {
       case 'Safe': return 'var(--color-success-bg)';
       case 'Suspicious': return 'var(--color-warning-bg)';
       case 'Scam': return 'var(--color-danger-bg)';
+      case 'Uncertain': return '#f0f0f0';
       default: return '#f0f0f0';
     }
   };
@@ -80,7 +82,7 @@ const Dashboard = () => {
             </div>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: getStatusBg(status), color: getStatusColor(status), borderRadius: 'var(--radius-full)', fontWeight: 600, fontSize: '1.1rem' }}>
-              {status === 'Safe' ? <CheckCircle size={20} /> : status === 'Suspicious' ? <AlertTriangle size={20} /> : <XCircle size={20} />}
+              {status === 'Safe' ? <CheckCircle size={20} /> : status === 'Suspicious' ? <AlertTriangle size={20} /> : status === 'Uncertain' ? <Info size={20} /> : <XCircle size={20} />}
               {status.toUpperCase()}
             </div>
             
@@ -110,10 +112,17 @@ const Dashboard = () => {
                   <div style={{ marginTop: '0.25rem' }}>
                     {reason.type === 'danger' ? <AlertTriangle style={{ color: 'var(--color-danger)' }} /> : reason.type === 'success' ? <CheckCircle style={{ color: 'var(--color-success)' }} /> : <Info style={{ color: 'var(--color-warning)' }} />}
                   </div>
-                  <div>
-                    <h4 style={{ fontWeight: 600, marginBottom: '0.25rem', color: reason.type === 'danger' ? 'var(--color-danger)' : reason.type === 'success' ? 'var(--color-success)' : 'var(--color-warning)' }}>
-                      {reason.title}
-                    </h4>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                      <h4 style={{ fontWeight: 600, color: reason.type === 'danger' ? 'var(--color-danger)' : reason.type === 'success' ? 'var(--color-success)' : 'var(--color-warning)' }}>
+                        {reason.title}
+                      </h4>
+                      {reason.points != null && (
+                        <span style={{ fontWeight: 700, fontSize: '0.85rem', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-md)', background: reason.points > 0 ? 'var(--color-success-bg)' : 'var(--color-danger-bg)', color: reason.points > 0 ? 'var(--color-success)' : 'var(--color-danger)' }}>
+                          {reason.points > 0 ? `+${reason.points}` : reason.points} pts
+                        </span>
+                      )}
+                    </div>
                     <p style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>{reason.desc}</p>
                   </div>
                 </div>

@@ -9,10 +9,44 @@ const setupGenAI = () => {
     return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 };
 
+/**
+ * Validate the parsed Gemini response has the expected shape.
+ * Returns a sanitized result or throws if the response is unusable.
+ * 
+ * Why this matters: Gemini could return { score: "high" } or { status: "Maybe" }
+ * and without validation we'd pass garbage to the scoring engine.
+ */
+const validateGeminiResponse = (parsed) => {
+    // Score must be a number
+    if (typeof parsed.score !== 'number' || isNaN(parsed.score)) {
+        throw new Error('Gemini returned invalid score (not a number).');
+    }
+
+    // Clamp score to valid range and round
+    const score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+
+    // Status must be one of the valid values
+    const validStatuses = ['Safe', 'Suspicious', 'Scam'];
+    const status = validStatuses.includes(parsed.status) ? parsed.status : null;
+    if (!status) {
+        throw new Error(`Gemini returned invalid status: "${parsed.status}".`);
+    }
+
+    // Reasons should be an array of strings (filter out non-strings)
+    const reasons = Array.isArray(parsed.reasons)
+        ? parsed.reasons.filter(r => typeof r === 'string')
+        : [];
+
+    // Recommendation should be a string
+    const recommendation = typeof parsed.recommendation === 'string'
+        ? parsed.recommendation
+        : '';
+
+    return { score, status, reasons, recommendation };
+};
+
 const analyzeInternshipText = async (text) => {
     try {
-        // ai is initialized below
-
         const prompt = `
 You are an expert fraud detection AI specialized in analyzing internship and job opportunities.
 Analyze the following internship/job opportunity text and classify it.
@@ -55,7 +89,8 @@ Return only JSON format like this:
         const cleanText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const parsedResult = JSON.parse(cleanText);
         
-        return parsedResult;
+        // Validate before returning — catch malformed AI responses early
+        return validateGeminiResponse(parsedResult);
 
     } catch (error) {
         console.error("Gemini API Error:", error);
@@ -64,5 +99,6 @@ Return only JSON format like this:
 };
 
 module.exports = {
-    analyzeInternshipText
+    analyzeInternshipText,
+    validateGeminiResponse  // Exported for testing
 };
